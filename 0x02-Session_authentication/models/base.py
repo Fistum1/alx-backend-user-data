@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""
-It is a base module
-"""
+""" Base module """
 from datetime import datetime
 from typing import TypeVar, List, Iterable
 from os import path
@@ -14,14 +12,10 @@ DATA = {}
 
 
 class Base():
-    """
-    It is a base class
-    """
+    """ Base class """
 
     def __init__(self, *args: list, **kwargs: dict):
-        """
-        It initialize a Base instance
-        """
+        """ Initialize a Base instance """
         s_class = str(self.__class__.__name__)
         if DATA.get(s_class) is None:
             DATA[s_class] = {}
@@ -39,9 +33,7 @@ class Base():
             self.updated_at = datetime.utcnow()
 
     def __eq__(self, other: TypeVar('Base')) -> bool:
-        """
-        Equality
-        """
+        """ Equality """
         if type(self) != type(other):
             return False
         if not isinstance(self, Base):
@@ -49,9 +41,7 @@ class Base():
         return (self.id == other.id)
 
     def to_json(self, for_serialization: bool = False) -> dict:
-        """
-        It converts the object a JSON dictionary
-        """
+        """ Convert the object a JSON dictionary """
         result = {}
         for key, value in self.__dict__.items():
             if not for_serialization and key[0] == '_':
@@ -64,9 +54,7 @@ class Base():
 
     @classmethod
     def load_from_file(cls):
-        """
-        It loads all objects from file
-        """
+        """ Load all objects from file """
         s_class = cls.__name__
         file_path = ".db_{}.json".format(s_class)
         DATA[s_class] = {}
@@ -80,9 +68,7 @@ class Base():
 
     @classmethod
     def save_to_file(cls):
-        """
-        It saves all objects to file
-        """
+        """ Save all objects to file """
         s_class = cls.__name__
         file_path = ".db_{}.json".format(s_class)
         objs_json = {}
@@ -93,18 +79,14 @@ class Base():
             json.dump(objs_json, f)
 
     def save(self):
-        """
-        It saves current object
-        """
+        """ Save current object """
         s_class = self.__class__.__name__
         self.updated_at = datetime.utcnow()
         DATA[s_class][self.id] = self
         self.__class__.save_to_file()
 
     def remove(self):
-        """
-        It removes an object
-        """
+        """ Remove object """
         s_class = self.__class__.__name__
         if DATA[s_class].get(self.id) is not None:
             del DATA[s_class][self.id]
@@ -112,34 +94,25 @@ class Base():
 
     @classmethod
     def count(cls) -> int:
-        """
-        It counts all objects
-        """
+        """ Count all objects """
         s_class = cls.__name__
         return len(DATA[s_class].keys())
 
     @classmethod
     def all(cls) -> Iterable[TypeVar('Base')]:
-        """
-        It returns all objects
-        """
+        """ Return all objects """
         return cls.search()
 
     @classmethod
     def get(cls, id: str) -> TypeVar('Base'):
-        """
-        It returns one object by ID
-        """
+        """ Return one object by ID """
         s_class = cls.__name__
         return DATA[s_class].get(id)
 
     @classmethod
     def search(cls, attributes: dict = {}) -> List[TypeVar('Base')]:
-        """
-        It searchs all objects with matching attributes
-        """
+        """ Search all objects with matching attributes """
         s_class = cls.__name__
-
         def _search(obj):
             if len(attributes) == 0:
                 return True
@@ -147,5 +120,5 @@ class Base():
                 if (getattr(obj, k) != v):
                     return False
             return True
-
-        return list(filter(_search, DATA[s_class].values())
+        
+        return list(filter(_search, DATA[s_class].values()))

@@ -1,20 +1,14 @@
 #!/usr/bin/env python3
-"""
-It is a user module
-"""
+""" User module """
 import hashlib
 from models.base import Base
 
 
 class User(Base):
-    """
-    It is a user class
-    """
+    """ User class """
 
     def __init__(self, *args: list, **kwargs: dict):
-        """
-        It initialize a User instance
-        """
+        """ Initialize a User instance """
         super().__init__(*args, **kwargs)
         self.email = kwargs.get('email')
         self._password = kwargs.get('_password')
@@ -23,25 +17,19 @@ class User(Base):
 
     @property
     def password(self) -> str:
-        """
-        A getter of the password
-        """
+        """ Getter of the password """
         return self._password
 
     @password.setter
     def password(self, pwd: str):
-        """
-        A setter of a new password: encrypt in SHA256
-        """
+        """ Setter of a new password: encrypt in SHA256 """
         if pwd is None or type(pwd) is not str:
             self._password = None
         else:
             self._password = hashlib.sha256(pwd.encode()).hexdigest().lower()
 
     def is_valid_password(self, pwd: str) -> bool:
-        """
-        It validates a password
-        """
+        """ Validate a password """
         if pwd is None or type(pwd) is not str:
             return False
         if self.password is None:
@@ -50,9 +38,7 @@ class User(Base):
         return hashlib.sha256(pwd_e).hexdigest().lower() == self.password
 
     def display_name(self) -> str:
-        """
-        It displays User name based on email/first_name/last_name
-        """
+        """ Display User name based on email/first_name/last_name """
         if self.email is None and self.first_name is None \
                 and self.last_name is None:
             return ""
@@ -63,4 +49,4 @@ class User(Base):
         if self.first_name is None:
             return "{}".format(self.last_name)
         else:
-            return "{} {}".format(self.first_name, self.last_name
+            return "{} {}".format(self.first_name, self.last_name)
